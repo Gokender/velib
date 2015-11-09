@@ -4,13 +4,14 @@ import sqlite3
 import time
 
 #searching the api key of velib
-key_file = open('api.key','r')
+key_file = open('jcdecaux.key','r')
 api_key = key_file.readline().rstrip('\n')
 key_file.close()
 
-url = 'https://api.jcdecaux.com/vls/v1/stations?contract=Paris&apiKey=' + api_key
 
-print(url)
+startime = time.time()
+
+url = 'https://api.jcdecaux.com/vls/v1/stations?contract=Paris&apiKey=' + api_key
 
 response = requests.get(url)
 
@@ -26,18 +27,7 @@ request_date = int(time.time())
 
 for station in data:
 
-    banking = 0
-    bonus = 0
     number = int(station['number'])
-    contract_name = station['contract_name']
-    name = station['name']
-    address = station['address']
-    position_lat = float(station['position']['lat'])
-    position_lng = float(station['position']['lng'])
-    if(station['banking'] == 'true'):
-        banking = 1
-    if(station['bonus'] == 'true'):
-        bonus = 1
     status = station['status']
     bike_stands = int(station['bike_stands'])
     available_bike_stands = int(station['available_bike_stands'])
@@ -45,7 +35,11 @@ for station in data:
     last_update = int(station['last_update'])
 
     cursor.execute("""
-    INSERT INTO stats(request_date, number,contract_name,name,address,position_lat,position_lng,banking,bonus,status,bike_stands,available_bike_stands,available_bikes,last_update)
-     VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (request_date,number,contract_name,name,address,position_lat,position_lng,banking,bonus,status,bike_stands,available_bike_stands,available_bikes,last_update))
+    INSERT INTO statistics(request_date,number,status,bike_stands,available_bike_stands,available_bikes,last_update)
+     VALUES(?, ?, ?, ?, ?, ?, ?)""", (number,request_date,status,bike_stands,available_bike_stands,available_bikes,last_update))
 
     conn.commit()
+
+endtime = time.time()
+
+print(int(endtime - startime))
