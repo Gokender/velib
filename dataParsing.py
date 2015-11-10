@@ -35,7 +35,7 @@ for station in data:
     last_update = int(station['last_update'])
 
     cursor.execute("""
-    INSERT INTO statistics(request_date,number,status,bike_stands,available_bike_stands,available_bikes,last_update)
+    INSERT INTO statistics(number,request_date,status,bike_stands,available_bike_stands,available_bikes,last_update)
      VALUES(?, ?, ?, ?, ?, ?, ?)""", (number,request_date,status,bike_stands,available_bike_stands,available_bikes,last_update))
 
     conn.commit()
@@ -43,3 +43,4 @@ for station in data:
 endtime = time.time()
 
 print(int(endtime - startime))
+conn.close()
